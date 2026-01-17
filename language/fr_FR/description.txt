@@ -1,0 +1,1 @@
+Gestion par lot : Ajouter un préfiltre avec nom / sans nom et ajoute une action possible sur les nom des photos.

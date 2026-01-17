@@ -1,0 +1,1 @@
+Batch manager, add a pre-filter with/without name and add an action on the image name.
