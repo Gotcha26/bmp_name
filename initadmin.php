@@ -5,7 +5,6 @@ if (!defined('PHPWG_ROOT_PATH')) die('Hacking attempt!');
 global $prefilter;
 
 add_event_handler('get_batch_manager_prefilters', 'BMPN_add_batch_manager_prefilters');
-add_event_handler('perform_batch_manager_prefilters', 'BMPN_perform_batch_manager_prefilters', EVENT_HANDLER_PRIORITY_NEUTRAL, 2);
 
 function BMPN_add_batch_manager_prefilters($prefilters)
 {
@@ -15,6 +14,8 @@ function BMPN_add_batch_manager_prefilters($prefilters)
 	));
 	return $prefilters;
 }
+
+add_event_handler('perform_batch_manager_prefilters', 'BMPN_perform_batch_manager_prefilters', EVENT_HANDLER_PRIORITY_NEUTRAL, 2);
 
 function BMPN_perform_batch_manager_prefilters($filter_sets, $prefilter)
 {
@@ -53,33 +54,6 @@ function BMPN_perform_batch_manager_prefilters($filter_sets, $prefilter)
 	return $filter_sets;
 }
 
-/**
- * Normalise une chaîne pour la comparaison :
- * - Convertit en minuscules
- * - Supprime les accents
- * - Supprime les caractères spéciaux (garde uniquement alphanumériques)
- */
-function BMPN_normalize_string($str)
-{
-	// Convertit en minuscules
-	$str = mb_strtolower($str, 'UTF-8');
-
-	// Supprime les accents
-	$str = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
-
-	// Remplace les underscores et tirets par des espaces
-	$str = str_replace(array('_', '-'), ' ', $str);
-
-	// Supprime tous les caractères non alphanumériques sauf espaces
-	$str = preg_replace('/[^a-z0-9 ]/', '', $str);
-
-	// Supprime les espaces multiples
-	$str = preg_replace('/\s+/', ' ', $str);
-
-	return trim($str);
-}
-
-add_event_handler('get_batch_manager_prefilters', 'BMPN2_add_batch_manager_prefilters');
 add_event_handler('perform_batch_manager_prefilters', 'BMPN2_perform_batch_manager_prefilters', EVENT_HANDLER_PRIORITY_NEUTRAL, 2);
 
 function BMPN2_add_batch_manager_prefilters($prefilters)
@@ -90,6 +64,8 @@ function BMPN2_add_batch_manager_prefilters($prefilters)
 	));
 	return $prefilters;
 }
+
+add_event_handler('get_batch_manager_prefilters', 'BMPN2_add_batch_manager_prefilters');
 
 function BMPN2_perform_batch_manager_prefilters($filter_sets, $prefilter)
 {
@@ -126,34 +102,7 @@ function BMPN2_perform_batch_manager_prefilters($filter_sets, $prefilter)
 	return $filter_sets;
 }
 
-add_event_handler('loc_end_element_set_global', 'BMPN_loc_end_element_set_global');
 add_event_handler('element_set_global_action', 'BMPN_element_set_global_action', EVENT_HANDLER_PRIORITY_NEUTRAL, 2);
-
-function BMPN_loc_end_element_set_global()
-{
-	global $template, $pwg_loaded_plugins;
-	if (isset($pwg_loaded_plugins['ExtendedDescription'])) {
-		$templateBMPN = '
-		<input type="checkbox" name="check_BMPN4" id="input_BMPN4"> ' . l10n('remove_name') . '<br>
-		<textarea rows="5" cols="50" placeholder="' . l10n('Type_here_the_name') . "  /  " . l10n('Use_Extended_Description_tags...') . '" class="description" name="BMPN3" id="BMPN3"></textarea><br>
-	  ';
-	} else {
-		$templateBMPN = '
-		<input type="checkbox" name="check_BMPN4" id="input_BMPN4"> ' . l10n('remove_name') . '<br>
-		<textarea rows="5" cols="50" placeholder="' . l10n('Type_here_the_name') . '" class="description" name="BMPN3" id="BMPN3"></textarea><br>
-	  ';
-	}
-	$template->func_combine_script(array(
-		"id" => "bmp_common",
-		"load" => "footer",
-		"path" => BMPN_PATH.'/bmp.js'
-	));
-	$template->append('element_set_global_plugins_actions', array(
-		'ID' => 'BMPN3',
-		'NAME' => l10n('Set_name'),
-		'CONTENT' => $templateBMPN,
-	));
-}
 
 function BMPN_element_set_global_action($action, $collection)
 {
@@ -182,4 +131,30 @@ function BMPN_element_set_global_action($action, $collection)
 			$datas
 		);
 	}
+}
+
+/**
+ * Normalise une chaîne pour la comparaison :
+ * - Convertit en minuscules
+ * - Supprime les accents
+ * - Supprime les caractères spéciaux (garde uniquement alphanumériques)
+ */
+function BMPN_normalize_string($str)
+{
+	// Convertit en minuscules
+	$str = mb_strtolower($str, 'UTF-8');
+
+	// Supprime les accents
+	$str = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
+
+	// Remplace les underscores et tirets par des espaces
+	$str = str_replace(array('_', '-'), ' ', $str);
+
+	// Supprime tous les caractères non alphanumériques sauf espaces
+	$str = preg_replace('/[^a-z0-9 ]/', '', $str);
+
+	// Supprime les espaces multiples
+	$str = preg_replace('/\s+/', ' ', $str);
+
+	return trim($str);
 }

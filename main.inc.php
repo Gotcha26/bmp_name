@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Batch Manager - Picture Name selector
-Version: 1.0
+Version: 1.1.0
 Description: Batch Manager, Add Prefilter with / with no picture's name and add action on name.
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=1061
 Author: Gotcha
